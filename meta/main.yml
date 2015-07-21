@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: Tony Deboschère
+  description: A small ansible role for installing joomla on an ubuntu server
+  company: www.neovia.fr
+  license: GPLv2
+  min_ansible_version: 1.4
+  platforms:
+  - name: Ubuntu
+    versions:
+    - trusty
+  categories:
+  - web
+dependencies: 
+  - { role: 'radamanth.php5-ansible', version: '1.0.0'  }
+  - { role: 'radamanth.mysql-ansible', version: '1.0.4'  }  
+  - { role: 'kosssi.composer' , version: 'v1.4.0' }
+  
