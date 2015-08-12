@@ -12,19 +12,27 @@
   - php5-cgi
   - libapache2-mod-auth-mysql
   - php5-mysql
+  tags:
+  - joomla
 
 # Enable and start apache
 - name: Create apache2 ssl Directory
   file: path=/etc/apache2/ssl state=directory owner=root group=root mode=0755
+  tags:
+  - joomla
 
 - name: Create self-signed certificate.
   command: openssl req -new -nodes -x509 -subj "{{ joomla_self_signed_cert_subj }}" -days 3650 -keyout /etc/apache2/ssl/{{joomla_site_name}}.key -out /etc/apache2/ssl/{{joomla_site_name}}.crt -extensions v3_ca
     creates=/etc/apache2/ssl/{{joomla_site_name}}.key
+  tags:
+  - joomla
 
 
 - name: Dismod phph5 for suphp and fcgid
   command : a2dismod php5
-  
+  tags:
+  - joomla
+
 - name: Enable mod for apache2
   command: a2enmod {{item}}
   with_items:
@@ -37,83 +45,129 @@
   - proxy
   - proxy_http
   - ssl
+  tags:
+  - joomla
 
   
 - name: edit /etc/php5/cgi/php.ini for fcgid
   replace: dest=/etc/php5/cgi/php.ini regexp="^;cgi\.fix_pathinfo=1$" replace="cgi.fix_pathinfo=1" backup=yes
+  tags:
+  - joomla
   
 - name: Template supĥp conf file
   template: src="suphp.conf" dest="/etc/suphp/suphp.conf"
+  tags:
+  - joomla
   
 - name: restart apache 2
   service: name=apache2 state=restarted
+  tags:
+  - joomla
 
 # Get Joomla
 - name: Download Joomla
   get_url: url="{{joomla_dist_url}}" dest="~/joomla-{{joomla_version}}.zip" 
+  tags:
+  - joomla
 
 - name: Ensure destination dir exists 
   file: path="{{joomla_install_dir}}" state="directory"  owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0755 recurse=yes
+  tags:
+  - joomla
   
   
 - name: Unarchive Joomla
   unarchive: copy=no src="~/joomla-{{joomla_version}}.zip" dest="{{joomla_install_dir}}" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0755 
+  tags:
+  - joomla
  
 - name: copy test SUPHP file 
   copy: src="testSUPHP.php" dest="{{joomla_install_dir}}/testSUPHP.php" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0755
+  tags:
+  - joomla
 
 # Creating Databases and users
 - name: Template initial data 
   template: src=joomla.sql dest="~/joomla.sql"
+  tags:
+  - joomla
 
 - name: Template addAdmin.sql
   template: src=admin.sql dest="~/admin.sql"
+  tags:
+  - joomla
 
 - name: Create mysql joomla database
   mysql_db: encoding="utf8" login_user="root" login_password="{{joomla_mysql_root_passwd}}" name="{{joomla_mysql_db_name}}" state=present
+  tags:
+  - joomla
 
 - name: Determine if import has already been done
   shell: mysql -e  'show tables;' {{joomla_mysql_db_name}}  
   register: db_created
   changed_when: "( db_created.stdout.find('{{joomla_site_dbprefix}}') == -1 )"
+  tags:
+  - joomla
 
 - debug: var=db_created 
+  tags:
+  - joomla
 
 - name: Import initial data in  mysql joomla database
   mysql_db: encoding="utf8" login_user="root" login_password="{{joomla_mysql_root_passwd}}" name="{{joomla_mysql_db_name}}" target="~/joomla.sql" state=import
   when: db_created.changed
+  tags:
+  - joomla
   
 - name: Create admin user in  mysql joomla database
   mysql_db: encoding="utf8" login_user="root" login_password="{{joomla_mysql_root_passwd}}" name="{{joomla_mysql_db_name}}" target="~/admin.sql" state=import
   ignore_errors: yes
+  tags:
+  - joomla
 
 
 - name: Delete admin.sql
   file: path="~/admin.sql" state="absent"
+  tags:
+  - joomla
   
   
 - name: Delete installation dir 
   file: path="{{joomla_install_dir}}/installation" state="absent"
+  tags:
+  - joomla
   
 - name: Create joomla DB user
   mysql_user: name="{{joomla_mysql_admin_user}}" password="{{joomla_mysql_admin_passwd}}" priv="{{joomla_mysql_db_name}}.*:ALL" state="present"
+  tags:
+  - joomla
 
 - name: restart mysql 
   service: name=mysql state=restarted
+  tags:
+  - joomla
 
 
 # install Joomla
 - name: template configuration file 
   template: src="configuration.php" dest="{{joomla_install_dir}}/configuration.php" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0744 
+  tags:
+  - joomla
 
 # Apache2 VHOST
 - name: Template VHOST 
   template: src=joomla.conf.j2 dest="/etc/apache2/sites-available/{{joomla_site_name}}.conf"
+  tags:
+  - joomla
   
 
 - name: Enable  VHOST
   command: a2ensite {{joomla_site_name}}.conf
+  tags: 
+  - joomla
   
 - name: restart apache2
   service: name=apache2 state=restarted
+  tags: 
+  - joomla
   
