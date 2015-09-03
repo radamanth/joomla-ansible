@@ -28,6 +28,23 @@ joomla_version: "3.4.3"
 # Url to get the joomla distribution
 joomla_dist_url: "https://github.com/joomla/joomla-cms/releases/download/{{joomla_version}}/Joomla_{{joomla_version}}-Stable-Full_Package.zip"
 
+# When True , do a get_url from {{joomla_dist_url}} 
+# When false, will do a file copy from role files/ directory 
+joomla_deploy_from_web: true
+
+# Fore reinstall - Beware it erase every previous data
+joomla_force_reinstall: false
+
+
+#  Shall we inject to sql file or not 
+joomla_inject_sql: true
+# You shoud template it to replace #__ by {{joomla_site_dbprefix:}}
+joomla_inject_sql_files:
+  - { path: "joomla.sql", name: "joomla.sql" }
+
+# delete installation dir or not ? 
+joomla_delete_installation_dir: true
+
 # You should put your site name here
 joomla_site_name: "joomla-site"
 # Future system user taht will be owner of the site (see suphp)
@@ -38,7 +55,7 @@ joomla_site_group: "joomla"
 joomla_install_dir: "/opt/joomla/{{joomla_site_name}}"
 
 
-# jommla root password for db and users creation 
+# jommla root password for db and users creation Shoudl put something here :D
 joomla_mysql_root_passwd: ""
 # Joomla DB Admin UserName
 joomla_mysql_admin_user : "joomla"
@@ -55,7 +72,6 @@ joomla_self_signed_cert_subj: "/C=FR/ST=France/L=Toulouse/O=IT/CN={{joomla_domai
 # Mail adress set in the apache 2 VHOST for the admin mail
 joomla_admin_mail: "YouVhostAdminMail@YourDomain.Com"
 
-
 # Joomla Instance Title
 joomla_site_title: "My Wonderfull Site"
 # Joomla SEcret token
@@ -63,7 +79,8 @@ joomla_site_secret: "QQvFeKphGid7CKLy"
 # Joomla Table prefix
 joomla_site_dbprefix: "joomla_"
 
-# Well this is obvious but change this ! 
+
+# This user will be inserted in your joomla database, so you better change passwd
 joomla_admin_login: "admin"
 joomla_admin_passwd: "admin123"
 
@@ -94,6 +111,6 @@ GPLV2
 Author Information
 ------------------
 
-Tony Deboschère
+Tony Deboschere
 www.neovia.fr
 Ansible Lover.
