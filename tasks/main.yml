@@ -106,17 +106,17 @@
   when: joomla_force_reinstall == true
  
 - name: Ensure destination dir exists 
-  file: path="{{joomla_install_dir}}" state="directory"  owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0755 recurse=yes
+  file: path="{{joomla_install_dir}}" state="directory"  owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0775 recurse=yes
   tags:
   - joomla  
   
 - name: Unarchive Joomla
-  unarchive: copy=no src="~/joomla.zip" dest="{{joomla_install_dir}}" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0755 
+  unarchive: copy=no src="~/joomla.zip" dest="{{joomla_install_dir}}" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0775 
   tags:
   - joomla
  
 - name: copy test SUPHP file 
-  copy: src="testSUPHP.php" dest="{{joomla_install_dir}}/testSUPHP.php" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0755
+  copy: src="testSUPHP.php" dest="{{joomla_install_dir}}/testSUPHP.php" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0775
   tags:
   - joomla
 
@@ -194,7 +194,7 @@
 
 # install Joomla
 - name: template configuration file 
-  template: src="configuration.php" dest="{{joomla_install_dir}}/configuration.php" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0744 
+  template: src="configuration.php" dest="{{joomla_install_dir}}/configuration.php" owner="{{joomla_site_owner}}" group="{{joomla_site_group}}" mode=0764 
   tags:
   - joomla
 
