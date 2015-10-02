@@ -130,7 +130,7 @@
   when: joomla_inject_sql == true
 
 - name: Template addAdmin.sql
-  template: src=admin.sql dest="~/admin.sql"
+  template: src=admin.sql dest="~/{{joomla_mysql_db_name}}_admin.sql"
   tags:
   - joomla
 
@@ -163,14 +163,14 @@
   - joomla
   
 - name: Create admin user in  mysql joomla database
-  mysql_db: encoding="utf8" login_user="root" login_password="{{joomla_mysql_root_passwd}}" name="{{joomla_mysql_db_name}}" target="~/admin.sql" state=import
+  mysql_db: encoding="utf8" login_user="root" login_password="{{joomla_mysql_root_passwd}}" name="{{joomla_mysql_db_name}}" target="~/{{joomla_mysql_db_name}}_admin.sql" state=import
   ignore_errors: yes
   tags:
   - joomla
 
 
 - name: Delete admin.sql
-  file: path="~/admin.sql" state="absent"
+  file: path="~/{{joomla_mysql_db_name}}_admin.sql" state="absent"
   tags:
   - joomla
   
@@ -182,7 +182,7 @@
   when: joomla_delete_installation_dir ==  true
   
 - name: Create joomla DB user
-  mysql_user: name="{{joomla_mysql_admin_user}}" password="{{joomla_mysql_admin_passwd}}" priv="{{joomla_mysql_db_name}}.*:ALL" state="present"
+  mysql_user: name="{{joomla_mysql_admin_user}}" password="{{joomla_mysql_admin_passwd}}" priv="{{joomla_mysql_db_name}}.*:ALL" state="present" append_privs=yes
   tags:
   - joomla
 
