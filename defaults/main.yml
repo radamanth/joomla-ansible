@@ -14,7 +14,7 @@ joomla_force_reinstall: false
 
 #  Shall we inject to sql file or not 
 joomla_inject_sql: true
-# You shoud template it to replace #__ by {{joomla_site_dbprefix:}}
+# You shoud template it to replace #__ by {{joomla_site_dbprefix}}
 joomla_inject_sql_files: 
   - { path: "joomla.sql", name: "joomla.sql" }
 
